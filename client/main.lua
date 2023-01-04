@@ -563,6 +563,27 @@ RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
     end
 end)
 
+RegisterNetEvent('hospital:client:grandmaRevive', function()
+    local player = PlayerPedId()
+    if isDead or InLaststand then
+        local pos = GetEntityCoords(player, true)
+        NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z, GetEntityHeading(player), true, false)
+        isDead = false
+        SetEntityInvincible(player, false)
+        SetLaststand(false)
+    end
+    SetEntityMaxHealth(player, 200)
+    SetEntityHealth(player, 200)
+    ClearPedBloodDamage(player)
+    SetPlayerSprint(PlayerId(), true)
+    ResetAll()
+    ResetPedMovementClipset(player, 0.0)
+    TriggerServerEvent('hud:server:RelieveStress', 100)
+    TriggerServerEvent("hospital:server:SetDeathStatus", false)
+    TriggerServerEvent("hospital:server:SetLaststandStatus", false)
+    QBCore.Functions.Notify(Lang:t('info.healthy'))
+end)
+
 RegisterNetEvent('hospital:client:Revive', function()
     local player = PlayerPedId()
 
